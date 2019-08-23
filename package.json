@@ -1,0 +1,21 @@
+{
+  "name": "remote-pc-controller",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "server": "node index.js",
+    "server:dev": "nodemon index.js",
+    "client": "live-server public"
+  },
+  "dependencies": {
+    "execa": "^2.0.4",
+    "express": "^4.17.1",
+    "socket.io": "^2.2.0"
+  },
+  "devDependencies": {
+    "@types/vue": "^2.0.0",
+    "live-server": "^1.2.1",
+    "nodemon": "^1.19.1"
+  }
+}
