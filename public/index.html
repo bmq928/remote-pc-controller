@@ -9,7 +9,7 @@
   </head>
   <body>
     <div id="app">
-      <span style="display:inline-block;vertical-align: middle;">
+      <span style="display:inline-block;vertical-align: middle;" @click="reset">
         <label class="rocker rocker-small" style="margin: 0">
           <input type="checkbox" v-model="onlyTap" />
           <span class="switch-left">Tap</span>
@@ -17,9 +17,10 @@
         </label>
       </span>
       <span v-if="!onlyTap">
-        <label>Button</label>
+        <label>Typed</label>
         <input v-bind:value="typedBtns.join(' + ')" type="text" />
-        <button>Submit</button>
+        <!-- <button @click="exec">Submit</button> -->
+        <button @click="reset">Reset</button>
       </span>
 
       <div id="keyboard">
@@ -156,7 +157,7 @@
           </li>
         </ul>
         <ul class="cf" id="asdfg">
-          <li @click="tap('caps lock')">
+          <li @click="tap('caps_lock')">
             <a class="key c20 alt" id="caps"><b></b><span>caps lock</span></a>
           </li>
           <li @click="tap('a')">
@@ -192,7 +193,7 @@
           <li @click="tap('\'')">
             <a class="key c222 alt"><b>"</b><span>'</span></a>
           </li>
-          <li @click="tap('enter')">
+          <li @click="enterOnClick">
             <a class="key c13 alt" id="enter"><span>enter</span></a>
           </li>
         </ul>
@@ -244,10 +245,12 @@
           <li @click="tap('alt')">
             <a class="key option" id="optionleft"><span>alt</span></a>
           </li>
-          <li @click="tap('window')">
+          <li @click="tap('cmd')">
             <a class="key command" id="commandleft"><span>window</span></a>
           </li>
-          <li><a class="key c32" id="spacebar"></a></li>
+          <li @click="tap('space')">
+            <a class="key c32" id="spacebar"></a>
+          </li>
           <li @click="tap('window')">
             <a class="key command" id="commandright"><span>window</span></a>
           </li>
@@ -275,11 +278,13 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="./vue.js"></script>
     <script>
-      const socket = io('http://localhost:3000')
+      const host = location.host
+      const socket = io(host)
       socket.emit('hello-from-browser', 'Hello from browser')
       socket.on('hello-from-server', () => {
         console.log('Socket is connected')
       })
+      
     </script>
     <script>
       const app = new Vue({
@@ -290,14 +295,22 @@
         },
         methods: {
           tap: function(key) {
-            if(this.onlyTap) return socket.emit('tap', { key })
+            if (this.onlyTap) return socket.emit('tap', { key })
 
             this.typedBtns.push(key)
           },
           exec: function() {
-            if(!this.onlyTap) socket.emit('exec', {typedBtns: this.typedBtns})
+            if (!this.onlyTap)
+              socket.emit('exec', { typedBtns: this.typedBtns })
 
             this.typedBtns = []
+          },
+          reset: function() {
+            this.typedBtns = []
+          },
+          enterOnClick: function() {
+            if(this.onlyTap) this.tap('enter')
+            else this.exec()
           }
         },
       })

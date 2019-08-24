@@ -17,8 +17,27 @@ app.get('/', (req, res) => {
 
 io.on('connection', socket => {
   socket.on('hello-from-browser', msg => {
-    console.log('Socket is connected')
     socket.emit('hello-from-server', 'Hello from server')
+  })
+
+  socket.on('tap', msg => {
+    console.log(msg)
+    const cliSendMsg = {
+      keys: [msg.key],
+    }
+    execa.command(
+      `python keyboard.py --tap --data ${JSON.stringify(cliSendMsg)}`
+    )
+  })
+
+  socket.on('exec', msg => {
+    console.log(msg)
+    const cliSendMsg = {
+      keys: msg.typedBtns
+    }
+    execa.command(
+      `python keyboard.py --execution --data ${JSON.stringify(cliSendMsg)}`
+    )
   })
 })
 
