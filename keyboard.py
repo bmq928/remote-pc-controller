@@ -1,7 +1,6 @@
 from pynput.keyboard import Controller, Key
 import json
 import click
-import time
 
 keyboard = Controller()
 
